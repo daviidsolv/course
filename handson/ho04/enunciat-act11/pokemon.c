@@ -68,7 +68,7 @@ void init_pokedex(void){
     int legendary = atoi(token);
 
     struct pokemon p = {id, name, type, type2, total, hp, attack, defense, spAttack, spDeffense, speed, generation, legendary};
-    pokedex[id] = p;
+    pokedex[id-1] = p;
   }
 
   fclose(f);
