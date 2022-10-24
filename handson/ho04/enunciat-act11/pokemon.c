@@ -72,4 +72,5 @@ void init_pokedex(void){
   }
 
   fclose(f);
+  free(buffer);
 }
