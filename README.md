@@ -9,7 +9,7 @@
 *University*: University of Lleida - Campus Igualada - Escola Politècnica Superior
 
 ## Descripció del repositori
-Aquest repositori conté tot el material elaborat per l'estudiant XXXX en el curs de Sistemes Operatius (102377).
+Aquest repositori conté tot el material elaborat per l'estudiant David Argente en el curs de Sistemes Operatius (102377).
 ## Organització
 
 * **activitats**: Conté les diferents activitats realitzades durant el curs. Cada carpeta correspont a una activitat diferent.
