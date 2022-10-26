@@ -57,49 +57,32 @@ void init_pokedex(void){
   //@TODO
 
   char *buffer = malloc(151);
+  char *info;
 
   while(fgets(buffer, 151, f) != NULL) {
-    char *token = strtok(buffer, ",");
-    int id = atoi(token);
+    struct pokemon p;
+    info = strtok(buffer, ",");
+    int c = 0;
+    while(info) {
 
-    token = strtok(NULL, ",");
-    char *name = token;
-
-    token = strtok(NULL, ",");
-    char *type = token;
-
-    token = strtok(NULL, ",");
-    char *type2 = token;
-
-    token = strtok(NULL, ",");
-    int total = atoi(token);
-    
-    token = strtok(NULL, ",");
-    int hp = atoi(token);
-
-    token = strtok(NULL, ",");
-    int attack = atoi(token);
-
-    token = strtok(NULL, ",");
-    int deffense = atoi(token);
-
-    token = strtok(NULL, ",");
-    int spAttack = atoi(token);
-
-    token = strtok(NULL, ",");
-    int spDeffense = atoi(token);
-
-    token = strtok(NULL, ",");
-    int speed = atoi(token);
-
-    token = strtok(NULL, ",");
-    int generation = atoi(token);
-
-    token = strtok(NULL, ",");
-    int legendary = atoi(token);
-
-    struct pokemon p = {id, name, type, type2, total, hp, attack, defense, spAttack, spDeffense, speed, generation, legendary};
-    pokedex[id-1] = p;
+      if(c == 0) p.id = atoi(info);
+      if(c == 1) strcpy(p.name, info);
+      if(c == 2) strcpy(p.type[0], info);
+      if(c == 3) strcpy(p.type[1], info);
+      if(c == 4) p.total = atoi(info);
+      if(c == 5) p.hp = atoi(info);
+      if(c == 6) p.attack = atoi(info);
+      if(c == 7) p.defense = atoi(info);
+      if(c == 8) p.spAttack = atoi(info);
+      if(c == 9) p.spDefense = atoi(info);
+      if(c == 10) p.speed = atoi(info);
+      if(c == 11) p.generation = atoi(info);
+      if(c == 12) p.legendary = atoi(info);
+      
+      info = strtok(NULL, ",");
+      c++;
+    }
+    pokedex[p.id-1] = p;
   }
 
   fclose(f);
