@@ -6,3 +6,11 @@
 #define KMAG  "\x1B[35m"
 #define KCYN  "\x1B[36m"
 #define KWHT  "\x1B[37m"
+
+#ifndef PARSING_H_   /* Include guard */
+#define PARSING_H_
+
+int parseCommand(char *command);
+int parseLine(char *line);
+
+#endif // PARSING_H_
