@@ -7,10 +7,27 @@
 #include <string.h>
 
 int parseCommand(char *command){
+    char *path = malloc(5+strlen(command));
+    char *args[] = {};
+    char **prt = args;
+    int i = 0;
+    strcpy(path, "/bin/");
+
+    char *token = strtok(command, " ");
+    strcat(path, token);
+    while(token != NULL) {
+        //add token to args array
+        prt[i] = token;
+        i++;
+        token = strtok(NULL, " ");
+    }
+    prt[i] = NULL;
+
     pid_t pid = fork();
     int status;
+
     if (pid == 0) {
-        execlp(command, command, (char *)NULL);
+        execv(path, args);
         exit(0);
     }
     else {
@@ -21,19 +38,19 @@ int parseCommand(char *command){
 
 int parseLine(char *line){
     int commands = 0;
+    char *temp = malloc(strlen(line)-1);
+    strncpy(temp, line, strlen(line)-1);
 
-    char *command = strtok(line, ";");
+    char *command = strtok(temp, ";");
     while (command != NULL) {
         commands++;
-
-        printf("Parsing command: %s with len: %ld\n", command, strlen(command));
 
         parseCommand(command);
 
         command = strtok(NULL, ";\0");
     }
 
-    printf("Number of commands: %d \n", commands);
+    free(temp);
     
     return 0;
 }
