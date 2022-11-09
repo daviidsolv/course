@@ -1,16 +1,23 @@
 #include "parsing.h"
+#include "other.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <string.h>
+#include "log.h"
 
-int parseCommand(char *command){
+int parseCommand(char *command, int debugMode){
+    if (parseErrors(command, debugMode) != 0) {
+        return -1;
+    }
+
     if(strncmp(command, "cd", 2) == 0) {
-        printf("cd command");
-        //TODO: implement cd command BY TOKENS
-        chdir("..");
+        char *token = strtok(command, " ");
+        token = strtok(NULL, " ");
+        chdir(token);
+
         return 0;
     } else if (strncmp(command, "help", 4) == 0) {
         printHelp();
@@ -46,7 +53,7 @@ int parseCommand(char *command){
     }
 }
 
-int parseLine(char *line){
+int parseLine(char *line, int debugMode){
     char *delim = ";\n\0";
     char *rest = line;
 
@@ -56,7 +63,10 @@ int parseLine(char *line){
         char *temp2 = malloc(strlen(command));
         strcpy(temp2, command);
 
-        parseCommand(temp2);
+        if(debugMode == 1) {
+            log_debug("Executing command: %s", temp2);
+        }
+        parseCommand(temp2, debugMode);
 
         free(temp2);
 
@@ -65,13 +75,15 @@ int parseLine(char *line){
     return 0;
 }
 
-void printHelp() {
-    printf("%s", 
-    "#### GTIDIC - UDL - OSSH #################################\n"
-    "#                                                        #\n"
-    "# Type program names and arguments, and hit enter.       #\n"
-    "# Use the man command for information on other programs. #\n"
-    "#                                                        #\n"
-    "##########################################################\n"
-    );
+int parseErrors(char *command, int debugMode) {
+
+    for(int i = 0; i < strlen(command); i++) {
+        if(command[i] == '<' || command[i] == '>' || command[i] == '|' || command[i] == '&') {
+            //print error through stderr
+            fprintf(stderr, "%sError: '%s' contains not allowed operators: [|<>&]%s\n", KRED, command, KNRM);
+            return -1;
+        }
+    }
+
+    return 0;
 }
