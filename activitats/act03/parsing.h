@@ -12,5 +12,6 @@
 
 int parseCommand(char *command);
 int parseLine(char *line);
+void printHelp();
 
 #endif // PARSING_H_

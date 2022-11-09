@@ -7,21 +7,31 @@
 #include <string.h>
 
 int parseCommand(char *command){
+    if(strncmp(command, "cd", 2) == 0) {
+        printf("cd command");
+        //TODO: implement cd command BY TOKENS
+        chdir("..");
+        return 0;
+    } else if (strncmp(command, "help", 4) == 0) {
+        printHelp();
+    }
+
     char *path = malloc(5+strlen(command));
-    char *args[] = {};
-    char **prt = args;
-    int i = 0;
     strcpy(path, "/bin/");
 
+    char *args[] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+    int i = 0;
+    
     char *token = strtok(command, " ");
     strcat(path, token);
-    while(token != NULL) {
-        //add token to args array
-        prt[i] = token;
-        i++;
+
+    while(token != NULL){
+        args[i] = token;
         token = strtok(NULL, " ");
+        i++;
     }
-    prt[i] = NULL;
+
+    args[i] = NULL;    
 
     pid_t pid = fork();
     int status;
@@ -31,26 +41,37 @@ int parseCommand(char *command){
         exit(0);
     }
     else {
-        wait(&status);
+        waitpid(pid, &status, WUNTRACED | WCONTINUED);
         return status;
     }
 }
 
 int parseLine(char *line){
-    int commands = 0;
-    char *temp = malloc(strlen(line)-1);
-    strncpy(temp, line, strlen(line)-1);
+    char *delim = ";\n\0";
+    char *rest = line;
 
-    char *command = strtok(temp, ";");
-    while (command != NULL) {
-        commands++;
+    char *command;
 
-        parseCommand(command);
+    while ((command = strtok_r(rest, delim, &rest))) {
+        char *temp2 = malloc(strlen(command));
+        strcpy(temp2, command);
 
-        command = strtok(NULL, ";\0");
+        parseCommand(temp2);
+
+        free(temp2);
+
     }
-
-    free(temp);
     
     return 0;
+}
+
+void printHelp() {
+    printf("%s", 
+    "#### GTIDIC - UDL - OSSH #################################\n"
+    "#                                                        #\n"
+    "# Type program names and arguments, and hit enter.       #\n"
+    "# Use the man command for information on other programs. #\n"
+    "#                                                        #\n"
+    "##########################################################\n"
+    );
 }
