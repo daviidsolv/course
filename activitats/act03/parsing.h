@@ -1,17 +1,8 @@
-#define KNRM  "\x1B[0m"
-#define KRED  "\x1B[31m"
-#define KGRN  "\x1B[32m"
-#define KYEL  "\x1B[33m"
-#define KBLU  "\x1B[34m"
-#define KMAG  "\x1B[35m"
-#define KCYN  "\x1B[36m"
-#define KWHT  "\x1B[37m"
-
 #ifndef PARSING_H_   /* Include guard */
 #define PARSING_H_
 
-int parseCommand(char *command);
-int parseLine(char *line);
-void printHelp();
+int parseCommand(char *command, int debugMode);
+int parseLine(char *line, int debugMode);
+int parseErrors(char *command, int debugMode);
 
 #endif // PARSING_H_
