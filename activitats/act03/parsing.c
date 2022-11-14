@@ -21,6 +21,8 @@ int parseCommand(char *command, int debugMode){
         return 0;
     } else if (strncmp(command, "help", 4) == 0) {
         printHelp();
+
+        return 0;
     }
 
     char *path = malloc(5+strlen(command));
