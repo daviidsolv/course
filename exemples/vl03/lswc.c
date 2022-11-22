@@ -11,8 +11,8 @@ int main(int argc, char *argv[])
 {
     int fd[2];
     
-    char *p1[] = {"grep", "david", NULL}; 
-    char *p2[] = {"/etc/passwd", NULL}; 
+    char *p1[] = {"ls", NULL}; 
+    char *p2[] = {"wc", "-l", NULL}; 
 
     if (pipe(fd)<0){
         perror("Error de creació del pipe fd[]");
@@ -49,9 +49,11 @@ int main(int argc, char *argv[])
             execvp(p1[0], p1);
             return EXIT_FAILURE;
     }
+
     close(fd[0]);
     close(fd[1]);
     waitpid(pid1,0,0);
     waitpid(pid2,0,0);
+    
     return EXIT_SUCCESS;
 }
