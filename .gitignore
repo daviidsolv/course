@@ -6,3 +6,15 @@ handson/ho03/solucio/src/.DS_Store
 handson/ho03/solucio/src/HelloWorld/.DS_Store
 handson/ho05/ex1-sol.c
 exemples/vl03/grep.c
+*.log
+*.o
+*.a
+
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
