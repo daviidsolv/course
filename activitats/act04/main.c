@@ -9,6 +9,7 @@
 int main(int argc, char *argv[])
 {
     int fd[2], fd2[2];
+    FILE *fp;
 
     char *p1[] = {"grep", "crafo", NULL};
     char *p2[] = {"cat", "/etc/passwd", NULL};
@@ -28,6 +29,7 @@ int main(int argc, char *argv[])
 
     pid_t pid1, pid2, pid3;
 
+    // whoami
     switch (pid3 = fork()){
         case -1:
             perror("Error fork() - pid3");
@@ -43,25 +45,32 @@ int main(int argc, char *argv[])
         default:
             //save whoami output to variable
             waitpid(pid3,0,0);
-            read(fd2[0], p1[1], 20);
+            p1[1] = malloc(sizeof(fd2[0]));
+            if(read(fd2[0], p1[1], sizeof(fd2[0])) < 0) perror("Error de lectura de la pipe fd2[0]");
             close(fd2[0]);
             close(fd2[1]);
     }
 
+    // grep whoami and save to file
     switch (pid2 = fork()){
         case -1:
             perror("Error fork() - pid2");
             return EXIT_FAILURE;
         case 0:
-            // Fill -> grep david -> llegeix stdin i imprimeix a stdout
+            // Fill -> grep whoami -> llegeix stdin i imprimeix a stdout
             // Tanquem stdin per llegir i redireccionem stdin per llegir de la pipe fd[0]
             dup2(fd[0],STDIN_FILENO);
+            // save stdout to fp file
+            fp = fopen("users.txt", "w");
+            dup2(fileno(fp),STDOUT_FILENO);
+            fclose(fp);
             close(fd[1]);
             close(fd[0]);
             execvp(p1[0], p1);
             return EXIT_FAILURE;
     }
 
+    // cat /etc/passwd
     switch (pid1 = fork()){
         case -1:
             perror("Error fork() - pid1");
@@ -78,6 +87,8 @@ int main(int argc, char *argv[])
 
     close(fd[0]);
     close(fd[1]);
+    close(fd2[0]);
+    close(fd2[1]);
     waitpid(pid2,0,0);
     waitpid(pid1,0,0);
 
