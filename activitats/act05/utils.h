@@ -11,9 +11,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <time.h>
 #include <sys/wait.h>
+#include <sys/time.h>
 
 #define PASS_LENGTH 4
 
-void generatePassword(char *str);
+int generatePassword(void);

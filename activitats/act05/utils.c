@@ -1,19 +1,11 @@
 #include "utils.h"
 
-void generatePassword(char *str) {
-    time_t rawtime;
-    struct tm * timeinfo;
+int generatePassword(void) {
+    struct timeval t;
+    gettimeofday(&t, NULL);
 
-    time ( &rawtime );
-    timeinfo = localtime ( &rawtime );
-
-    unsigned int seed = (unsigned) getpid() * (unsigned) timeinfo->tm_sec;
+    unsigned int seed = (unsigned) getpid() * (unsigned) t.tv_usec;
     srand(seed);
-    for (int i = 0; i < PASS_LENGTH; i++) {
-        char c = (char) (rand() % 58 + 'A');
-        if(c > 'Z' && c < 'a') {
-            c = (char) (c+6);
-        }
-        str[i] = c;
-    }
+    
+    return rand() % 10000;
 }

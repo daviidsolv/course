@@ -6,14 +6,13 @@ int main(int argc, char *argv[]) {
     int players = 0;
 
     printf("How many players? ");
-    
+
     if (scanf("%d", &players) >0) printf("Creating %d players...\n", players);
     else printf("You did not enter any number.\n");
 
-    char temp[PASS_LENGTH];
-    generatePassword(temp);
+    int unlock = generatePassword();
 
-    printf("Password: %s\n", temp);
+    printf("Password: %d\n", unlock);
 
     printf("Starting game with %d players!\n", players);
 
@@ -33,6 +32,23 @@ int main(int argc, char *argv[]) {
                 break;
         }
     }
+
+    /*open pipe to communicate with childs
+    int fd[2];
+    pipe(fd);
+
+    for(int i = 0; i < players; i++) {
+        char key[PASS_LENGTH];
+        read(fd[0], key, PASS_LENGTH);
+        printf("Password: %s\n", key);
+        if(strcmp(key, unlock) == 0) {
+            printf("Player %d unlocked the door!\n", i);
+            for(int j = 0; j < players; j++) {
+                kill(childs[j], SIGKILL);
+            }
+            break;
+        }
+    }*/
 
     waitpid(childs[players-1], NULL, 0);
 
