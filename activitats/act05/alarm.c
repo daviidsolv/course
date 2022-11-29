@@ -11,14 +11,13 @@ int main(int argc, char *argv[]) {
     int time = atoi(argv[1]);
 
     while(time > 0) {
-        printf("Time left: %d\n", time);
+        printf("\033[A\33[2KT\rTime left: %d\n", time);
         sleep(1);
         time--;
     }
 
-    printf("[ALARM] Time's up!\n");
+    printf("\033[A\33[2KT\rTime left: %d\n", time);
 
     kill(getppid(), SIGUSR1);
-
-    return 0;
+    exit(time);
 }

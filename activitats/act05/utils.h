@@ -14,7 +14,8 @@
 #include <sys/wait.h>
 #include <sys/time.h>
 #include <signal.h>
+#include <string.h>
 
-#define PASS_LENGTH 4
+#define PASS_LENGTH 3
 
-int generatePassword(void);
+void generatePassword(char *code);
