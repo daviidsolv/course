@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <sys/wait.h>
 #include <sys/time.h>
+#include <signal.h>
 
 #define PASS_LENGTH 4
 

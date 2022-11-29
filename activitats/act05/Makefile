@@ -4,6 +4,7 @@ SOURCES=main.c utils.c
 
 OBJECTS=$(SOURCES:.c=.o)
 EXECS=act05
+RM=/bin/rm
 
 .PHONY: all
 all: $(SOURCES) $(EXECS)
@@ -12,6 +13,7 @@ $(EXECS): $(OBJECTS)
 	$(CC) $(OBJECTS) -o $@
 	$(CC) $(CFLAGS) player.c -o player.o
 	$(CC) utils.o player.o -o player
+	$(CC) alarm.c -o alarm
 	$(RM) *.o
 
 .c.o:
@@ -19,9 +21,10 @@ $(EXECS): $(OBJECTS)
 
 .PHONY: clean
 clean:
-	/bin/rm -rf *.o
-	/bin/rm -rf $(EXECS)
-	rm -rf player 
+	$(RM) -rf *.o
+	$(RM) -rf $(EXECS)
+	$(RM) -rf player 
+	$(RM) -rf alarm
 
 .PHONY: run
 run: $(EXECS)
