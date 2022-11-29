@@ -10,6 +10,9 @@ all: $(SOURCES) $(EXECS)
 	
 $(EXECS): $(OBJECTS)
 	$(CC) $(OBJECTS) -o $@
+	$(CC) $(CFLAGS) player.c -o player.o
+	$(CC) utils.o player.o -o player
+	$(RM) *.o
 
 .c.o:
 	$(CC) $(CFLAGS) $< -o $@
@@ -17,7 +20,8 @@ $(EXECS): $(OBJECTS)
 .PHONY: clean
 clean:
 	/bin/rm -rf *.o
-	/bin/rm -rf $(EXECS) 
+	/bin/rm -rf $(EXECS)
+	rm -rf player 
 
 .PHONY: run
 run: $(EXECS)

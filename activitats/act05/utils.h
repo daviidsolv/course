@@ -11,6 +11,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <time.h>
+#include <sys/wait.h>
 
 #define PASS_LENGTH 4
 

@@ -6,11 +6,18 @@ int main(int argc, char *argv[]) {
     int players = 0;
 
     printf("How many players? ");
-    scanf("%d", &players);
+    
+    if (scanf("%d", &players) >0) printf("Creating %d players...\n", players);
+    else printf("You did not enter any number.\n");
+
+    char temp[PASS_LENGTH];
+    generatePassword(temp);
+
+    printf("Password: %s\n", temp);
 
     printf("Starting game with %d players!\n", players);
 
-    pid_t *childs = (pid_t *) malloc(players * sizeof(pid_t));
+    pid_t *childs = (pid_t *) malloc((unsigned) players * sizeof(pid_t));
 
     for(int i = 0; i < players; i++) {
         switch(childs[i] = fork()) {
@@ -27,10 +34,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    char temp[PASS_LENGTH];
-    generatePassword(temp);
-
-    printf("Password: %s\n", temp);
+    waitpid(childs[players-1], NULL, 0);
 
     return 0;
 }
