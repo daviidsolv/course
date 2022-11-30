@@ -9,6 +9,9 @@ char *unlock;
 pid_t alarmPid;
 pid_t *childs;
 
+time_t alarmStart;
+time_t alarmEnd;
+
 struct sigaction siga;
 
 int main(int argc, char *argv[]) {
@@ -40,11 +43,6 @@ int main(int argc, char *argv[]) {
     printf("--- Entren %d jugadors a la sala\n", players);
     printf("--- La paraula a endevinar és: %s\n", unlock);
 
-    int fd[2];
-    pipe(fd);
-    close(fd[0]);
-    close(fd[1]);
-
     childs = (pid_t *) malloc((unsigned) players * sizeof(pid_t));
 
     for(int i = 0; i < players; i++) {
@@ -62,7 +60,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    sleep(1);
+    usleep(100 * 1000);
 
     switch(alarmPid = fork()) {
         case -1:
@@ -73,6 +71,11 @@ int main(int argc, char *argv[]) {
             execv(args[0], args);
             perror("Error executing alarm process");
             exit(-1);
+        default:
+            //get time now
+            alarmStart = time(NULL);
+            localtime(&alarmStart);
+            break;
     }
 
     pause();
@@ -87,25 +90,21 @@ void signalHandler(int sig, siginfo_t *siginfo, void *context) {
         printf(RED"************DING DONG\n"RESET);
         for(int i = 0; i < players; i++) {
             printf(RED"El jugador[%d] ha quedat atrapat i surt de EscapeRoom[%d]\n"RESET, childs[i], getpid());
-            kill(childs[i], SIGKILL);
         }
         printf("--- Els jugadors han perdut la partida. Fins aviat!\n");
-        exit(0);
     } else if (sig == SIGUSR2) { // PLAYER FOUND KEY
         printf(RESET"El jugador[%d] ha trobat la contrasenya %s!\n", sender_pid, unlock);
-        kill(alarmPid, SIGKILL);
         for(int i = 0; i < players; i++) {
             printf(GREEN"El jugador[%d] ha escapat i surt de EscapeRoom[%d]\n"RESET, childs[i], getpid());
-            kill(childs[i], SIGKILL);
         }
-        printf("--- Els jugadors han guanyat la partida en %d segons!\n", 3);
-        exit(0);
-    } else {
-        //kill all subprocesses
-        for(int i = 0; i < players; i++) {
-            kill(childs[i], SIGKILL);
-        }
-        kill(alarmPid, SIGKILL);
-        exit(0);
+        alarmEnd = time(NULL);
+        localtime(&alarmEnd);
+        printf("--- Els jugadors han guanyat la partida en %d segons!\n", (int) difftime(alarmEnd, alarmStart));
     }
+
+    for(int i = 0; i < players; i++) {
+        kill(childs[i], SIGKILL);
+    }
+    kill(alarmPid, SIGKILL);
+    exit(0);
 }
