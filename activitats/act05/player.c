@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
         }
 
         //sleep 500ms
-        usleep(100 * 1000);
+        usleep(50 * 1000);
 
     }
     

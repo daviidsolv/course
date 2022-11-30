@@ -8,15 +8,19 @@ int main(int argc, char *argv[]) {
     
     if(argc != 2) return -1;
 
+    int fd[2];
+    pipe(fd);
+    
+
     int time = atoi(argv[1]);
 
     while(time > 0) {
-        printf("\033[A\33[2KT\rTime left: %d\n", time);
+        printf("Time left: %d\n\033[A\33[2KT\r", time);
         sleep(1);
         time--;
     }
 
-    printf("\033[A\33[2KT\rTime left: %d\n", time);
+    printf("Time left: %d\n", time);
 
     kill(getppid(), SIGUSR1);
     exit(time);

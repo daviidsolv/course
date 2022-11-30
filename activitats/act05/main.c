@@ -4,13 +4,12 @@ void signalHandler(int sig, siginfo_t *siginfo, void *context);
 
 int players = 0;
 char *alarmTime;
+char *unlock;
 
 pid_t alarmPid;
 pid_t *childs;
 
 struct sigaction siga;
-
-int *alarmStatus;
 
 int main(int argc, char *argv[]) {
 
@@ -21,7 +20,7 @@ int main(int argc, char *argv[]) {
 
     alarmTime = argv[1];
     players = atoi(argv[2]);
-    char *unlock = argv[3];
+    unlock = argv[3];
 
     siga.sa_sigaction = *signalHandler;
     siga.sa_flags |= SA_SIGINFO;
@@ -43,17 +42,8 @@ int main(int argc, char *argv[]) {
 
     int fd[2];
     pipe(fd);
-
-    switch(alarmPid = fork()) {
-        case -1:
-            perror("Error creating alarm process");
-            exit(-1);
-        case 0: ;
-            char *args[] = {"./alarm", alarmTime, NULL};
-            execv(args[0], args);
-            perror("Error executing alarm process");
-            exit(-1);
-    }
+    close(fd[0]);
+    close(fd[1]);
 
     childs = (pid_t *) malloc((unsigned) players * sizeof(pid_t));
 
@@ -70,6 +60,19 @@ int main(int argc, char *argv[]) {
             default:
                 break;
         }
+    }
+
+    sleep(1);
+
+    switch(alarmPid = fork()) {
+        case -1:
+            perror("Error creating alarm process");
+            exit(-1);
+        case 0: ;
+            char *args[] = {"./alarm", alarmTime, NULL};
+            execv(args[0], args);
+            perror("Error executing alarm process");
+            exit(-1);
     }
 
     pause();
@@ -89,16 +92,20 @@ void signalHandler(int sig, siginfo_t *siginfo, void *context) {
         printf("--- Els jugadors han perdut la partida. Fins aviat!\n");
         exit(0);
     } else if (sig == SIGUSR2) { // PLAYER FOUND KEY
-        printf("El jugador[%d] ha trobat la contrasenya!\n", sender_pid);
+        printf(RESET"El jugador[%d] ha trobat la contrasenya %s!\n", sender_pid, unlock);
         kill(alarmPid, SIGKILL);
-        waitpid(sender_pid, &alarmStatus, 0);
         for(int i = 0; i < players; i++) {
-            printf("El jugador[%d] ha escapat i surt de EscapeRoom[%d]\n", childs[i], getpid());
+            printf(GREEN"El jugador[%d] ha escapat i surt de EscapeRoom[%d]\n"RESET, childs[i], getpid());
             kill(childs[i], SIGKILL);
         }
-        printf("--- Els jugadors han guanyat la partida en %d segons!\n", alarmStatus);
+        printf("--- Els jugadors han guanyat la partida en %d segons!\n", 3);
+        exit(0);
+    } else {
+        //kill all subprocesses
+        for(int i = 0; i < players; i++) {
+            kill(childs[i], SIGKILL);
+        }
+        kill(alarmPid, SIGKILL);
         exit(0);
     }
-
-    exit(0);
 }
